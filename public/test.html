@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="test.css">
+    <title>Test nightin' backend</title>
+</head>
+<body>
+<div class="page-header">
+    <div style="margin-left: 10%">
+        <h1>Test Nightin' Backend REST API </h1>
+    </div>
+</div>
+<div class="container-large">
+
+    <div class="col-xs-12 pleasedontfloat" style="margin-bottom: 20px; vertical-align: middle;">
+        <div class="col-xs-3">
+            <h1 style="text-align:left;float:left;">Server's answer: </h1>
+        </div>
+        <pre class="col-xs-6" id="answer" style="text-align:left;float:left;vertical-align: middle; margin-top: 20px">Hi fellow tester!</pre>
+    </div>
+
+    <hr class="pleasedontfloat"/>
+
+    <div class="col-xs-3 pleasedontfloat">
+        <form id="signup">
+        <h2>Sign up <br><small>(POST the following form to '/signup')</small></h2>
+            <div class="form-group">
+                <label for="signup_username">Username:</label>
+                <input type="text" name="username" class="form-control" id="signup_username">
+            </div>
+            <div class="form-group">
+                <label for="signup_password">Password:</label>
+                <input type="text" name="password" class="form-control" id="signup_password">
+            </div>
+            <div class="form-group">
+                <label for="signup_first_name">First name:</label>
+                <input type="text" name="first_name" class="form-control" id="signup_first_name">
+            </div>
+            <div class="form-group">
+                <label for="signup_last_name">Last name:</label>
+                <input type="text" name="last_name" class="form-control" id="signup_last_name">
+            </div>
+            <div class="form-group">
+                <label for="signup_email">Email:</label>
+                <input type="text" name="email" class="form-control" id="signup_email">
+            </div>
+            <button type="submit" class="btn btn-default float">Submit</button>
+        </form>
+    </div>
+    <div class="col-xs-3">
+        <form id="login">
+            <h2>Login <br><small>(GET to '/login/:user/:username')</small></h2>
+            <div class="form-group">
+                <label for="login_username">Username:</label>
+                <input type="text" name="username" class="form-control" id="login_username">
+            </div>
+            <div class="form-group">
+                <label for="login_password">Password:</label>
+                <input type="text" name="password" class="form-control" id="login_password">
+            </div>
+
+            <button type="submit" class="btn btn-default float">Login</button>
+        </form>
+    </div>
+    <div class="col-xs-3">
+        <form id="auth">
+            <h2>Authenticate <br><small>(GET to '/auth/:user/:token')</small></h2>
+            <div class="form-group">
+                <label for="auth_username">Username:</label>
+                <input type="text" name="username" class="form-control" id="auth_username">
+            </div>
+            <div class="form-group">
+                <label for="auth_token">Token:</label>
+                <input type="text" name="password" class="form-control" id="auth_token">
+            </div>
+
+            <button type="submit" class="btn btn-default float">Authenticate</button>
+        </form>
+    </div>
+</div>
+
+
+
+</body>
+
+<script>
+
+
+    $(document).ready(function () {
+
+
+
+        $("#signup").submit(function (event) {
+            event.preventDefault();
+            $.ajax({
+                url: '/signup',
+                type: 'POST',
+                dataType: 'json',
+                data: $('form#signup').serialize(),
+                success: handleSuccess
+            });
+            $("#signup")[0].reset();
+
+            return false;
+        });
+
+        $("#login").submit(function (event) {
+            event.preventDefault();
+            $.ajax({
+                url: '/login/' + $("#login_username").val() + "/" + $("#login_password").val(),
+                type: 'GET',
+                dataType: 'json',
+                success: handleSuccess
+            });
+            $("#login")[0].reset();
+
+            return false;
+        });
+
+        $("#auth").submit(function (event) {
+            event.preventDefault();
+            $.ajax({
+                url: '/auth/' + $("#auth_username").val() + "/" + $("#auth_token").val(),
+                type: 'GET',
+                dataType: 'json',
+                success: handleSuccess
+            });
+            $("#auth")[0].reset();
+
+            return false;
+        });
+
+        function handleSuccess(data) {
+            $("#answer").html(JSON.stringify(data, undefined, 2));
+        }
+
+    });
+</script>
+</html>
