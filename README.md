@@ -1,4 +1,4 @@
-# Realtime Game Framework
+# Nightin' backend
 
 ## Install
 
