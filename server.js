@@ -35,7 +35,7 @@ MongoClient.connect('mongodb://'+mongodb_connection_string, function(err, db) {
     console.log("[DATABASE][INFO] Connected to MongoDB with connection string: " + mongodb_connection_string);
 });
 
-var server_port = 80;
+var server_port = 8080;
 var server_ip_address = '127.0.0.1';
 var server_interface = '0.0.0.0';
 

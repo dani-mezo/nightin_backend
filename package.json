@@ -1,5 +1,5 @@
 {
-  "name": "Nightin Backend",
+  "name": "nightin-backend",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -10,6 +10,6 @@
     "password-hash": "~1.2.2",
     "body-parser": "~1.14.1",
     "mongodb": "~2.0.43",
-    "path": "~0.12.7",
+    "path": "~0.12.7"
   }
 }
