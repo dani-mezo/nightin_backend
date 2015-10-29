@@ -79,6 +79,85 @@
             <button type="submit" class="btn btn-default float">Authenticate</button>
         </form>
     </div>
+    <div class="col-xs-3">
+        <form id="user">
+            <h2>Get user <br><small>(POST to '/user/:username', in data: validation username+token )</small></h2>
+            <div class="form-group">
+                <label for="user_usernameToGet">User to get:</label>
+                <input type="text" name="username" class="form-control" id="user_usernameToGet">
+            </div>
+            <div class="form-group">
+                <label for="user_username">Username:</label>
+                <input type="text" name="username" class="form-control" id="user_username">
+            </div>
+            <div class="form-group">
+                <label for="user_token">Token:</label>
+                <input type="text" name="token" class="form-control" id="user_token">
+            </div>
+
+            <button type="submit" class="btn btn-default float">Get user</button>
+        </form>
+    </div>
+
+
+</div>
+
+<div class="container-large">
+    <div class="col-xs-3">
+        <form id="friend">
+            <h2>Add friend <br><small>(POST to '/friend/:username', in data: validation username+token )</small></h2>
+            <div class="form-group">
+                <label for="friend_usernameToAdd">User to add:</label>
+                <input type="text" name="username" class="form-control" id="friend_usernameToAdd">
+            </div>
+            <div class="form-group">
+                <label for="friend_username">Username:</label>
+                <input type="text" name="username" class="form-control" id="friend_username">
+            </div>
+            <div class="form-group">
+                <label for="friend_token">Token:</label>
+                <input type="text" name="token" class="form-control" id="friend_token">
+            </div>
+
+            <button type="submit" class="btn btn-default float">Friend user</button>
+        </form>
+    </div>
+    <div class="col-xs-3">
+        <form id="friends">
+            <h2>Get Friends <br><small>(POST to '/friends', in data: validation username+token )</small></h2>
+
+            <div class="form-group">
+                <label for="auth_username">Username:</label>
+                <input type="text" name="username" class="form-control" id="friends_username">
+            </div>
+            <div class="form-group">
+                <label for="auth_token">Token:</label>
+                <input type="text" name="token" class="form-control" id="friends_token">
+            </div>
+
+            <button type="submit" class="btn btn-default float">Get friends</button>
+        </form>
+    </div>
+
+    <div class="col-xs-3">
+        <form id="achi">
+            <h2>Get Achievements  <br><small>(POST to '/achievements/:username', in data: validation username+token )</small></h2>
+            <div class="form-group">
+                <label for="achi_username">User to get it's achievements:</label>
+                <input type="text" name="username" class="form-control" id="achi_usernameToGet">
+            </div>
+            <div class="form-group">
+                <label for="achi_username">Username:</label>
+                <input type="text" name="username" class="form-control" id="achi_username">
+            </div>
+            <div class="form-group">
+                <label for="achi_token">Token:</label>
+                <input type="text" name="token" class="form-control" id="achi_token">
+            </div>
+
+            <button type="submit" class="btn btn-default float">Get Achievements</button>
+        </form>
+    </div>
 </div>
 
 
@@ -128,6 +207,62 @@
                 success: handleSuccess
             });
             $("#auth")[0].reset();
+
+            return false;
+        });
+
+        $("#user").submit(function (event) {
+            event.preventDefault();
+            $.ajax({
+                url: '/user/' + $("#user_usernameToGet").val(),
+                type: 'POST',
+                dataType: 'json',
+                data: {username: $("#user_username").val(), token: $("#user_token").val()},
+                success: handleSuccess
+            });
+            $("#user")[0].reset();
+
+            return false;
+        });
+
+        $("#friend").submit(function (event) {
+            event.preventDefault();
+            $.ajax({
+                url: '/friend/' + $("#friend_usernameToAdd").val(),
+                type: 'POST',
+                dataType: 'json',
+                data: {username: $("#friend_username").val(), token: $("#friend_token").val()},
+                success: handleSuccess
+            });
+            $("#friend")[0].reset();
+
+            return false;
+        });
+
+        $("#friends").submit(function (event) {
+            event.preventDefault();
+            $.ajax({
+                url: '/friends',
+                type: 'POST',
+                dataType: 'json',
+                data: {username: $("#friends_username").val(), token: $("#friends_token").val()},
+                success: handleSuccess
+            });
+            $("#friend")[0].reset();
+
+            return false;
+        });
+
+        $("#achi").submit(function (event) {
+            event.preventDefault();
+            $.ajax({
+                url: '/achievements/' + $("#achi_usernameToGet").val(),
+                type: 'POST',
+                dataType: 'json',
+                data: {username: $("#achi_username").val(), token: $("#achi_token").val()},
+                success: handleSuccess
+            });
+            $("#achi")[0].reset();
 
             return false;
         });
