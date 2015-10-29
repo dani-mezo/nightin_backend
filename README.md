@@ -22,33 +22,40 @@
 
 ## REST API
 
+### `/login/:user/:password`
 * `/login/:user/:password` GET REST call can be used to authenticate clients. Answers can be:
   * `{status: "success", token: "recently_generated_token"}` OR
   * `{status: "error", message: "random message"}`
 
+### `/auth/:user/:token`
 * `/auth/:user/:token` GET REST call can be used to authenticate clients. Answers can be:
   * `{status: "success"}` OR
   * `{status: "error", message: "random message"}`
   
+### `/signup`
 * `/signup` POST REST call can be used to sign up. Answers can be:
   * `{status: "success"}` OR
   * `{status: "error", message: "random message"}`
   
+### `/user/:username`
 * `/user/:username` POST REST call can be used to get full info about a user.
   * You must include as `data` the following object, to authenticate the call with:
-  * {username: "...", token: "..."}
+  * `{username: "...", token: "..."}`
   
+### `/friend/:username`
 * `/friend/:username` POST REST call can be used to add a friend to the one who is validated by `data`.
   * You must include as `data` the following object, to authenticate the call with:
-  * {username: "...", token: "..."}
+  * `{username: "...", token: "..."}`
   
+### `/friends`
 * `/friends` POST REST call can be used to get all the friends of the one who is validated by `data`.
   * You must include as `data` the following object, to authenticate the call with:
-  * {username: "...", token: "..."}
+  * `{username: "...", token: "..."}`
   
+### `/achievements/:username`
 * `/achievements/:username` POST REST call can be used to achievemenets of the user, specified in the uri.
   * You must include as `data` the following object, to authenticate the call with:
-  * {username: "...", token: "..."}
+  * `{username: "...", token: "..."}`
   
 ## Important Notes
 
