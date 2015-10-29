@@ -42,7 +42,7 @@ var server_port = 8080;
 var server_ip_address = '127.0.0.1';
 var server_interface = '0.0.0.0';
 
-server.listen(server_port, server_ip_address, server_interface);
+server.listen(server_port, server_interface);
 console.log("[SERVER][INFO] Nightin-backend server is listening on interface: " + server_interface + ", on port: " + server_port);
 
 app.use(express.static(__dirname + '/public'));
