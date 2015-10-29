@@ -244,7 +244,7 @@ router.post('/user/:username', function(req, res, next) {
                         return;
                     }
                     var user = docs[0];
-                    res.json(user);
+                    res.json({status: "success", user:user});
                     console.log("[POST][USER][INFO] Requested user found: " + usernameToGet);
                     return;
                 });
@@ -390,7 +390,7 @@ router.post('/friends', function(req, res, next) {
                     }
                     var user = docs[0];
                     console.log("[POST][FRIEND][INFO] Friends found of user: " + username);
-                    res.json({friends: user.friends});
+                    res.json({status: "success", friends: user.friends});
                 });
             } else {
                 res.json({status: "error", message: "internal"});
@@ -440,7 +440,7 @@ router.post('/achievements/:username', function(req, res, next) {
                         return;
                     }
                     var userToGetAchievements = docs[0];
-                    res.json({achievements: userToGetAchievements.achievements});
+                    res.json({status: "success", achievements: userToGetAchievements.achievements});
                     console.log('[POST][ACHIEVEMENTS][INFO] Find achievements of: ' + usernameToGetAchievements+ ", to: " + username);
                     return;
                 });

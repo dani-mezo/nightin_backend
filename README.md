@@ -46,7 +46,7 @@
   * You must include as `data` the following object, to authenticate the call with:
   * {username: "...", token: "..."}
   
-* `/achievements/:username` POST REST call can be used to add a friend to the one who is validated by `data`.
+* `/achievements/:username` POST REST call can be used to achievemenets of the user, specified in the uri.
   * You must include as `data` the following object, to authenticate the call with:
   * {username: "...", token: "..."}
   
