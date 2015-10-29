@@ -1,4 +1,3 @@
-
 var express = require('express');
 var hash = require('password-hash');
 var app = express();
@@ -7,7 +6,7 @@ var router = express.Router();
 var path = require('path');
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 
 var mongodb_connection_string = '127.0.0.1:27017/';
 
@@ -25,12 +24,13 @@ var User = (function () {
         this.achievements = [];
         this.picture = "";
     }
+
     return User;
 })();
 
 var MongoClient = require('mongodb').MongoClient;
-MongoClient.connect('mongodb://'+mongodb_connection_string, function(err, db) {
-    if(err) {
+MongoClient.connect('mongodb://' + mongodb_connection_string, function (err, db) {
+    if (err) {
         console.log("[DATABASE][ERROR] Failed to connect to MongoDB with connection string: " + mongodb_connection_string);
         throw err;
     }
@@ -47,70 +47,46 @@ console.log("[SERVER][INFO] Nightin-backend server is listening on interface: " 
 
 app.use(express.static(__dirname + '/public'));
 
-router.use(function(req, res, next) {
-    console.log("[" +req.method+"][INFO]["+ req.path+"] Requested.");
+router.use(function (req, res, next) {
+    console.log("[" + req.method + "][INFO][" + req.path + "] Requested.");
     next();
 });
 
 router.get('/test', function (req, res) {
-    res.sendFile(path.join(__dirname , 'public', 'test.html'));
+    res.sendFile(path.join(__dirname, 'public', 'test.html'));
     console.log('[GET][TEST][INFO] Test.html is requested');
 });
+
+app.use('/', router);
 
 /*********************************************************************************************************************************************/
 /*************************************************************** REST API ********************************************************************/
 /*********************************************************************************************************************************************/
 
 
+
 /*************************************************************** LOGIN ********************************************************************/
 
-router.get('/login/:username/:password', function(req, res, next) {
+router.get('/login/:username/:password', function (req, res, next) {
 
     var username = req.params.username;
     var password = req.params.password;
 
-    // Rare passwords should not be logged
-    console.log('[GET][LOGIN][INFO] Login request with username: ' + username);
+    loginUser(username, password, res);
+});
 
-    if(users != undefined) {
+router.post('/login', function (req, res, next) {
+    var username = req.body.data.username;
+    var password = req.body.data.password;
 
-        var criteria = {};
-        criteria.username = username;
+    console.log(req.body);
 
-        // findOne method is deprecated at the moment
-        users.find(criteria).toArray(function(err, docs){
-            if(err) {
-                res.json({status: "error", message: "internal"});
-                console.log("[DATABASE][ERROR]");
-                console.log(err);
-                return;
-            }
-            if(docs === undefined || docs.length === 0){
-                res.json({status: "error", message: "User not found!"});
-                console.log("[GET][LOGIN][WARNING] Requested user not found in the database");
-                return;
-            }
-            var user = docs[0];
-            if(hash.verify(password, user['password'])){
-                var token = generate_key();
-                console.log("[GET][LOGIN][INFO] Token generated for user: " + username + ", token:" + token);
-
-                updateUserToken(username, token, res);
-            } else {
-                res.json({status: "error", message: "Wrong username or password!"});
-                console.log("[GET][LOGIN][INFO] Wrong password for the username: " + username);
-            }
-        });
-    } else {
-        res.json({status: "error", message: "internal"});
-        console.log("[DATABASE][ERROR] Collection 'users' is undefined!");
-        return;
-    }
+    loginUser(username, password, res);
 });
 
 /*************************************************************** RANDOM AUTH ********************************************************************/
 
-router.get('/auth/:username/:token', function(req, res, next) {
+router.get('/auth/:username/:token', function (req, res, next) {
 
     var username = req.params.username;
     var token = req.params.token;
@@ -118,26 +94,26 @@ router.get('/auth/:username/:token', function(req, res, next) {
     // Rare passwords should not be logged
     console.log('[GET][AUTH][INFO] Authentication request with username: ' + username + ', token: ' + token);
 
-    if(users != undefined) {
+    if (users != undefined) {
 
         var criteria = {};
         criteria.username = username;
 
         // findOne method is deprecated at the moment
-        users.find(criteria).toArray(function(err, docs){
-            if(err) {
+        users.find(criteria).toArray(function (err, docs) {
+            if (err) {
                 res.json({status: "error", message: "internal"});
                 console.log("[DATABASE][ERROR]");
                 console.log(err);
                 return;
             }
-            if(docs === undefined || docs.length === 0){
+            if (docs === undefined || docs.length === 0) {
                 res.json({status: "error", message: "User not found!"});
                 console.log("[GET][AUTH][WARNING] Requested user not found in the database");
                 return;
             }
             var user = docs[0];
-            if(token === user['token']){
+            if (token === user['token']) {
                 res.json({status: "success", message: "Successfully authenticated user!"});
                 console.log("[GET][AUTH][INFO] Successfully authenticated user: " + username);
             } else {
@@ -154,7 +130,7 @@ router.get('/auth/:username/:token', function(req, res, next) {
 
 /*************************************************************** SIGN UP ********************************************************************/
 
-router.post('/signup', function(req, res, next) {
+router.post('/signup', function (req, res, next) {
 
     var rare = req.body.password;
     var username = req.body.username;
@@ -163,14 +139,14 @@ router.post('/signup', function(req, res, next) {
     var last_name = req.body.last_name;
 
 
-    if( username === undefined || username === "" ||
+    if (username === undefined || username === "" ||
         email === undefined || email === "" ||
         first_name === undefined || first_name === "" ||
         last_name === undefined || last_name === "" ||
         rare === undefined || rare === "") {
 
         console.log('[POST][SIGNUP][WARNING] Invalid form!');
-        res.json({ status: "error", message: "Invalid form!"});
+        res.json({status: "error", message: "Invalid form!"});
         return;
     }
 
@@ -179,14 +155,14 @@ router.post('/signup', function(req, res, next) {
     console.log('[POST][SIGNUP][INFO] Sign up request with username: ' + username + ', email: ' + email);
 
     if (users != undefined) {
-        users.findOne({ username: username }, function (err, doc) {
-            if(err){
+        users.findOne({username: username}, function (err, doc) {
+            if (err) {
                 console.log("[DATABASE][ERROR] Failed to save user: " + username);
-                res.json({ status: "error", message: "internal"});
+                res.json({status: "error", message: "internal"});
             }
             if (doc) {
                 console.log('[POST][SIGNUP][INFO] User can not be saved to database, username is already taken: ' + username);
-                res.json({ status: "error", message: "Username is taken!" });
+                res.json({status: "error", message: "Username is taken!"});
                 return;
             }
             else {
@@ -197,29 +173,30 @@ router.post('/signup', function(req, res, next) {
         });
     }
     else {
-        res.json({ status: "error", message: "internal"});
+        res.json({status: "error", message: "internal"});
         console.log("[DATABASE][ERROR] Collection 'users' is undefined!");
     }
 });
-
-app.use('/', router);
-
-
 
 
 
 
 /*************************************************************** GET USER ********************************************************************/
 
-router.post('/user/:username', function(req, res, next) {
+router.post('/user/:username', function (req, res, next) {
 
     var usernameToGet = req.params.username;
     var username = req.body.username;
     var token = req.body.token;
 
-    var call = function(isValid) {
-        if(!isValid){
-            res.json({status: "error", message: "Failed to validated token!"});
+    var response = {status: null, message: null, data: null};
+
+    var call = function (isValid) {
+        if (!isValid) {
+            response.status = "error";
+            response.message = "Failed to validated token!";
+
+            res.json(response);
             console.log('[POST][USER][WARNING] NOT valid user request: ' + usernameToGet + ', from user: ' + username);
         } else {
 
@@ -231,30 +208,56 @@ router.post('/user/:username', function(req, res, next) {
                 criteria.username = usernameToGet;
 
                 // findOne method is deprecated at the moment
-                users.find(criteria,{username:1, first_name:1, last_name:1, friends:1, achievements:1 , picture:1}).toArray(function (err, docs) {
+                users.find(criteria, {
+                    username: 1,
+                    first_name: 1,
+                    last_name: 1,
+                    friends: 1,
+                    achievements: 1,
+                    picture: 1
+                }).toArray(function (err, docs) {
                     if (err) {
-                        res.json({status: "error", message: "internal"});
+
+                        response.status = "error";
+                        response.message = "internal";
+
+                        res.json(response);
                         console.log("[DATABASE][ERROR]");
                         console.log(err);
                         return;
                     }
                     if (docs === undefined || docs.length === 0) {
-                        res.json({status: "error", message: "User not found!"});
+
+                        response.status = "error";
+                        response.message = "User not found!";
+
+                        res.json(response);
+
                         console.log("[POST][USER][WARNING] Requested user not found in the database");
                         return;
                     }
                     var user = docs[0];
-                    res.json(user);
+
+                    response.status = "success";
+                    response.data = user;
+
+                    res.json(response);
+
                     console.log("[POST][USER][INFO] Requested user found: " + usernameToGet);
                     return;
                 });
             } else {
-                res.json({status: "error", message: "internal"});
+
+                response.status = "error";
+                response.message = "internal";
+
+                res.json(response);
+
                 console.log("[DATABASE][ERROR] Collection 'users' is undefined!");
                 return;
             }
         }
-    }
+    };
 
     isValidTokenForUser(username, token, call);
 
@@ -262,14 +265,14 @@ router.post('/user/:username', function(req, res, next) {
 
 /*************************************************************** ADD FRIEND ********************************************************************/
 
-router.post('/friend/:username', function(req, res, next) {
+router.post('/friend/:username', function (req, res, next) {
 
     var usernameToAdd = req.params.username;
     var username = req.body.username;
     var token = req.body.token;
 
-    var call = function(isValid) {
-        if(!isValid){
+    var call = function (isValid) {
+        if (!isValid) {
             res.json({status: "error", message: "Failed to validated token!"});
             console.log('[POST][FRIEND][WARNING] NOT valid Request for add user: ' + usernameToAdd + ', to the friends of user: ' + username);
         } else {
@@ -313,18 +316,25 @@ router.post('/friend/:username', function(req, res, next) {
                         var user = docs[0];
 
                         var isIncluded = false;
-                        for(var k in user.friends){
-                            if(user.friends[k].username === friend.username){
+                        for (var k in user.friends) {
+                            if (user.friends[k].username === friend.username) {
                                 isIncluded = true;
                             }
                         }
-                        if(isIncluded){
+                        var isSame = (user._id === friend._id); //TODO EZ MIÉRT NEM JÓ???
+                        isSame = user.username === friend.username;
+
+                        if(isSame) {
+                            res.json({status: "error", message: "User is the same!"});
+                            console.log("[POST][FRIEND][WARNING] User: " + friend.username + " is the same of user: " + user.username);
+                            return;
+                        } else if (isIncluded) {
                             res.json({status: "error", message: "Users are already friends!"});
                             console.log("[POST][FRIEND][WARNING] User: " + friend.username + " is already a friend to user: " + user.username);
                             return;
-                        } else {
+                        }  else {
                             user.friends.push({username: friend.username, picture: friend.picture});
-                            users.updateOne({ username: user.username }, { $set: user }, function (err) {
+                            users.updateOne({username: user.username}, {$set: user}, function (err) {
                                 if (!err) {
                                     res.json({status: "success", message: "Successfully added user as friend!"});
                                     console.log("[POST][FRIEND][INFO] User: " + friend.username + " added as friend to user: " + user.username);
@@ -332,7 +342,7 @@ router.post('/friend/:username', function(req, res, next) {
                                 }
                                 else {
                                     console.log("[DATABASE][ERROR] Failed to save user with added friend: " + user.username);
-                                    res.json({status: "error" , message: "internal"});
+                                    res.json({status: "error", message: "internal"});
                                     console.log(err);
                                     return;
                                 }
@@ -349,7 +359,7 @@ router.post('/friend/:username', function(req, res, next) {
                 return;
             }
         }
-    }
+    };
 
     isValidTokenForUser(username, token, call);
 
@@ -357,13 +367,13 @@ router.post('/friend/:username', function(req, res, next) {
 
 /*************************************************************** GET FRIENDS ********************************************************************/
 
-router.post('/friends', function(req, res, next) {
+router.post('/friends', function (req, res, next) {
 
     var username = req.body.username;
     var token = req.body.token;
 
-    var call = function(isValid) {
-        if(!isValid){
+    var call = function (isValid) {
+        if (!isValid) {
             res.json({status: "error", message: "Failed to validated token!"});
             console.log('[POST][FRIENDS][WARNING] NOT valid Request for get friends of: ' + username);
         } else {
@@ -407,19 +417,19 @@ router.post('/friends', function(req, res, next) {
 
 /*************************************************************** GET ACHIEVEMENTS ********************************************************************/
 
-router.post('/achievements/:username', function(req, res, next) {
+router.post('/achievements/:username', function (req, res, next) {
 
     var usernameToGetAchievements = req.params.username;
     var username = req.body.username;
     var token = req.body.token;
 
-    var call = function(isValid) {
-        if(!isValid){
+    var call = function (isValid) {
+        if (!isValid) {
             res.json({status: "error", message: "Failed to validated token!"});
             console.log('[POST][ACHIEVEMENTS][WARNING] NOT valid Request for get achievements of: ' + usernameToGetAchievements + ", to: " + username);
         } else {
 
-            console.log('[POST][ACHIEVEMENTS][INFO] Valid Request for get achievements of: ' + usernameToGetAchievements+ ", to: " + username);
+            console.log('[POST][ACHIEVEMENTS][INFO] Valid Request for get achievements of: ' + usernameToGetAchievements + ", to: " + username);
 
             if (users != undefined) {
 
@@ -441,7 +451,7 @@ router.post('/achievements/:username', function(req, res, next) {
                     }
                     var userToGetAchievements = docs[0];
                     res.json({achievements: userToGetAchievements.achievements});
-                    console.log('[POST][ACHIEVEMENTS][INFO] Find achievements of: ' + usernameToGetAchievements+ ", to: " + username);
+                    console.log('[POST][ACHIEVEMENTS][INFO] Find achievements of: ' + usernameToGetAchievements + ", to: " + username);
                     return;
                 });
             } else {
@@ -450,7 +460,7 @@ router.post('/achievements/:username', function(req, res, next) {
                 return;
             }
         }
-    }
+    };
 
     isValidTokenForUser(username, token, call);
 
@@ -460,8 +470,46 @@ router.post('/achievements/:username', function(req, res, next) {
 /****************************************************************** UTILITY ********************************************************************/
 
 
+function loginUser(username, password, res) {
+// Rare passwords should not be logged
+    console.log('[GET][LOGIN][INFO] Login request with username: ' + username);
 
-function saveUser(User, res){
+    if (users != undefined) {
+
+        var criteria = {};
+        criteria.username = username;
+
+        // findOne method is deprecated at the moment
+        users.find(criteria).toArray(function (err, docs) {
+            if (err) {
+                res.json({status: "error", message: "internal"});
+                console.log("[DATABASE][ERROR]");
+                console.log(err);
+                return;
+            }
+            if (docs === undefined || docs.length === 0) {
+                res.json({status: "error", message: "User not found!"});
+                console.log("[GET][LOGIN][WARNING] Requested user not found in the database");
+                return;
+            }
+            var user = docs[0];
+            if (hash.verify(password, user['password'])) {
+                var token = generate_key();
+                console.log("[GET][LOGIN][INFO] Token generated for user: " + username + ", token:" + token);
+
+                updateUserToken(username, token, res);
+            } else {
+                res.json({status: "error", message: "Wrong username or password!"});
+                console.log("[GET][LOGIN][INFO] Wrong password for the username: " + username);
+            }
+        });
+    } else {
+        res.json({status: "error", message: "internal"});
+        console.log("[DATABASE][ERROR] Collection 'users' is undefined!");
+    }
+}
+
+function saveUser(User, res) {
     if (users != undefined) {
         users.insert(User, function (err, records) {
             if (!err) {
@@ -470,39 +518,37 @@ function saveUser(User, res){
                 console.log("[POST][SIGNUP][INFO] User signed up successfully: " + User.username);
             } else {
                 console.log("[DATABASE][ERROR] Failed to save user: " + User.username);
-                res.json({status: "error" , message: "internal"});
+                res.json({status: "error", message: "internal"});
             }
         });
-    }else{
+    } else {
         console.log("[DATABASE][ERROR] Collection 'users' is undefined!");
-        res.json({status: "error" , message: "internal"});
+        res.json({status: "error", message: "internal"});
     }
 
 }
 
-function isValidTokenForUser(username, token, callback){
+function isValidTokenForUser(username, token, callback) {
 
-    if(users != undefined) {
+    if (users != undefined) {
         var criteria = {};
         criteria.username = username;
 
-        // findOne method is deprecated at the moment
-        users.find(criteria).toArray(function(err, docs){
-            if(err) {
-                console.log("[DATABASE][ERROR]");
-                console.log(err);
+        users.find(criteria).toArray(function (err, docs) {
+            if (err) {
+                console.log("[DATABASE][ERROR]", err);
                 callback(false);
-            }
-            if(docs === undefined || docs.length === 0){
+            } else if (docs === undefined || docs.length === 0) {
+                console.log("[DATABASE][VALIDATION][WARNING] User not found: " + username);
                 callback(false);
-            }
-            var user = docs[0];
-            if(token === user['token']){
-                console.log("[DATABASE][VALIDATION][INFO] Successfully validated token for user: " + username);
-                callback(true);
             } else {
-                console.log("[DATABASE][VALIDATION][WARNING] Tokens do not match. Failed to validate token for user: " + username);
-                callback(false);
+                if (token === docs[0]['token']) {
+                    console.log("[DATABASE][VALIDATION][INFO] Successfully validated token for user: " + username);
+                    callback(true);
+                } else {
+                    console.log("[DATABASE][VALIDATION][WARNING] Tokens do not match. Failed to validate token for user: " + username);
+                    callback(false);
+                }
             }
         });
     } else {
@@ -513,7 +559,7 @@ function isValidTokenForUser(username, token, callback){
 
 function updateUserToken(username, token, res) {
     if (users != undefined) {
-        users.updateOne({ username: username }, { $set: { token: token } }, function (err) {
+        users.updateOne({username: username}, {$set: {token: token}}, function (err) {
             if (!err) {
                 console.log("[DATABASE][INFO] Token updated to user: " + username);
                 res.json({status: "success", token: token});
@@ -521,19 +567,19 @@ function updateUserToken(username, token, res) {
             }
             else {
                 console.log("[DATABASE][ERROR] Failed to update token to user: " + username);
-                res.json({status: "error" , message: "internal"});
+                res.json({status: "error", message: "internal"});
                 console.log(err);
             }
         });
-    }else{
+    } else {
         console.log("[DATABASE][ERROR] Collection 'users' is undefined!");
-        res.json({status: "error" , message: "internal"});
+        res.json({status: "error", message: "internal"});
     }
 }
 
 var crypto = require('crypto');
 
-var generate_key = function() {
+var generate_key = function () {
     var sha = crypto.createHash('sha256');
     sha.update(Math.random().toString());
     return sha.digest('hex');
