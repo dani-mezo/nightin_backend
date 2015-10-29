@@ -33,3 +33,26 @@
 * `/signup` POST REST call can be used to sign up. Answers can be:
   * `{status: "success"}` OR
   * `{status: "error", message: "random message"}`
+  
+* `/user/:username` POST REST call can be used to get full info about a user.
+  * You must include as `data` the following object, to authenticate the call with:
+  * {username: "...", token: "..."}
+  
+* `/friend/:username` POST REST call can be used to add a friend to the one who is validated by `data`.
+  * You must include as `data` the following object, to authenticate the call with:
+  * {username: "...", token: "..."}
+  
+* `/friends` POST REST call can be used to get all the friends of the one who is validated by `data`.
+  * You must include as `data` the following object, to authenticate the call with:
+  * {username: "...", token: "..."}
+  
+* `/achievements/:username` POST REST call can be used to add a friend to the one who is validated by `data`.
+  * You must include as `data` the following object, to authenticate the call with:
+  * {username: "...", token: "..."}
+  
+## Important Notes
+
+* RECREATE database before launch this version, due to its not compatible with the old one, and you can get runtime error otherwise.
+* Achievements should be calculated only at the server IMO, which is not supported by REST really.
+* Due to REST is stateless against the client, every REST call must contain authentication.
+* Can be buggy yet.
