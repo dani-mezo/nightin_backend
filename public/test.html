@@ -25,7 +25,9 @@
 
     <div class="col-xs-3 pleasedontfloat">
         <form id="signup">
-        <h2>Sign up <br><small>(POST the following form to '/signup')</small></h2>
+            <h2>Sign up <br>
+                <small>(POST the following form to '/signup')</small>
+            </h2>
             <div class="form-group">
                 <label for="signup_username">Username:</label>
                 <input type="text" name="username" class="form-control" id="signup_username">
@@ -51,7 +53,9 @@
     </div>
     <div class="col-xs-3">
         <form id="login">
-            <h2>Login <br><small>(GET to '/login/:user/:username')</small></h2>
+            <h2>Login <br>
+                <small>(GET to '/login/:user/:username')</small>
+            </h2>
             <div class="form-group">
                 <label for="login_username">Username:</label>
                 <input type="text" name="username" class="form-control" id="login_username">
@@ -66,7 +70,9 @@
     </div>
     <div class="col-xs-3">
         <form id="auth">
-            <h2>Authenticate <br><small>(GET to '/auth/:user/:token')</small></h2>
+            <h2>Authenticate <br>
+                <small>(GET to '/auth/:user/:token')</small>
+            </h2>
             <div class="form-group">
                 <label for="auth_username">Username:</label>
                 <input type="text" name="username" class="form-control" id="auth_username">
@@ -81,7 +87,9 @@
     </div>
     <div class="col-xs-3">
         <form id="user">
-            <h2>Get user <br><small>(POST to '/user/:username', in data: validation username+token )</small></h2>
+            <h2>Get user <br>
+                <small>(POST to '/user/:username', in data: validation username+token )</small>
+            </h2>
             <div class="form-group">
                 <label for="user_usernameToGet">User to get:</label>
                 <input type="text" name="username" class="form-control" id="user_usernameToGet">
@@ -105,7 +113,9 @@
 <div class="container-large">
     <div class="col-xs-3">
         <form id="friend">
-            <h2>Add friend <br><small>(POST to '/friend/:username', in data: validation username+token )</small></h2>
+            <h2>Add friend <br>
+                <small>(POST to '/friend/:username', in data: validation username+token )</small>
+            </h2>
             <div class="form-group">
                 <label for="friend_usernameToAdd">User to add:</label>
                 <input type="text" name="username" class="form-control" id="friend_usernameToAdd">
@@ -124,7 +134,9 @@
     </div>
     <div class="col-xs-3">
         <form id="friends">
-            <h2>Get Friends <br><small>(POST to '/friends', in data: validation username+token )</small></h2>
+            <h2>Get Friends <br>
+                <small>(POST to '/friends', in data: validation username+token )</small>
+            </h2>
 
             <div class="form-group">
                 <label for="auth_username">Username:</label>
@@ -141,7 +153,9 @@
 
     <div class="col-xs-3">
         <form id="achi">
-            <h2>Get Achievements  <br><small>(POST to '/achievements/:username', in data: validation username+token )</small></h2>
+            <h2>Get Achievements <br>
+                <small>(POST to '/achievements/:username', in data: validation username+token )</small>
+            </h2>
             <div class="form-group">
                 <label for="achi_username">User to get it's achievements:</label>
                 <input type="text" name="username" class="form-control" id="achi_usernameToGet">
@@ -161,14 +175,28 @@
 </div>
 
 
-
 </body>
 
 <script>
 
+    $.fn.serializeObject = function()
+    {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function() {
+            if (o[this.name] !== undefined) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
 
     $(document).ready(function () {
-
 
 
         $("#signup").submit(function (event) {
@@ -177,7 +205,7 @@
                 url: '/signup',
                 type: 'POST',
                 dataType: 'json',
-                data: $('form#signup').serialize(),
+                data: {data: $('form#signup').serializeObject()},
                 success: handleSuccess
             });
             $("#signup")[0].reset();
@@ -188,9 +216,10 @@
         $("#login").submit(function (event) {
             event.preventDefault();
             $.ajax({
-                url: '/login/' + $("#login_username").val() + "/" + $("#login_password").val(),
-                type: 'GET',
+                url: '/login',
+                type: 'POST',
                 dataType: 'json',
+                data: {data: {username: $("#login_username").val(), password: $("#login_password").val()}},
                 success: handleSuccess
             });
             $("#login")[0].reset();
@@ -201,9 +230,10 @@
         $("#auth").submit(function (event) {
             event.preventDefault();
             $.ajax({
-                url: '/auth/' + $("#auth_username").val() + "/" + $("#auth_token").val(),
-                type: 'GET',
+                url: '/auth',
+                type: 'POST',
                 dataType: 'json',
+                data: {data: {username: $("#auth_username").val(), token: $("#auth_token").val()}},
                 success: handleSuccess
             });
             $("#auth")[0].reset();
@@ -214,10 +244,10 @@
         $("#user").submit(function (event) {
             event.preventDefault();
             $.ajax({
-                url: '/user/' + $("#user_usernameToGet").val(),
+                url: '/user',
                 type: 'POST',
                 dataType: 'json',
-                data: {username: $("#user_username").val(), token: $("#user_token").val()},
+                data: {username: $("#user_username").val(), token: $("#user_token").val(), data:{username:$("#user_usernameToGet").val()}},
                 success: handleSuccess
             });
             $("#user")[0].reset();
@@ -228,10 +258,10 @@
         $("#friend").submit(function (event) {
             event.preventDefault();
             $.ajax({
-                url: '/friend/' + $("#friend_usernameToAdd").val(),
+                url: '/friend',
                 type: 'POST',
                 dataType: 'json',
-                data: {username: $("#friend_username").val(), token: $("#friend_token").val()},
+                data: {username: $("#friend_username").val(), token: $("#friend_token").val(), data:{username:$("#friend_usernameToAdd").val()}},
                 success: handleSuccess
             });
             $("#friend")[0].reset();
@@ -256,10 +286,10 @@
         $("#achi").submit(function (event) {
             event.preventDefault();
             $.ajax({
-                url: '/achievements/' + $("#achi_usernameToGet").val(),
+                url: '/achievements',
                 type: 'POST',
                 dataType: 'json',
-                data: {username: $("#achi_username").val(), token: $("#achi_token").val()},
+                data: {username: $("#achi_username").val(), token: $("#achi_token").val(), data:{username:$("#achi_usernameToGet").val()}},
                 success: handleSuccess
             });
             $("#achi")[0].reset();
