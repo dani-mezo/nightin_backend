@@ -18,27 +18,39 @@ run `mongod.exe` BEFORE running `node server.js `
 (you might want to set up a default database on the same drive as mongodb is installed as e.g.: `e:/data/db/`, or either use the command line argument to set up yours, e.g: `mongod.exe -dbpath 'path/to/your/db'`)
 DO NOT restart mongodb during server.js is running, due to reconnection is not implemented yet
 
+
 ## REST API
 
 ### `POST /login`
-Body: `{username: <username>, password: <password>}`  
-REST call can be used to authenticate clients, and generate new token 
+REST call can be used to authenticate clients, and generate new token
 
-Answers can be:  
+__Headers:__ No required header  
+__Body:__
+
+    {
+        username: <username>, 
+        password: <password>
+    }  
+
+
+__Answers:__  
 success: `{token: <valid_token>}`  
 error: `{status: 'error', message: <random message>}`
 
 ### `POST /auth`
-Body: `empty`   
-REST call can be used to authenticate client's token.
+REST call can be used to authenticate client's token.  
 
-Answers can be:  
+__Headers:__ `Authorization: Basic `  
+__Body:__ `empty`  
+__Answers:__  
 success: `{token: <valid_token>}`  
 error: `{status: 'error', message: <random message>}`
   
 ### `POST /signup`
-Body:
+REST call can be used to sign up. 
 
+__Headers:__ `Authorization: Basic `  
+__Body:__
 
     {
         username: <username>,
@@ -48,34 +60,34 @@ Body:
         email: <email>
     }
 
-
-REST call can be used to sign up. 
-
-Answers can be:  
+__Answers:__  
 success: `{<user object>}`  
 error: `{status: 'error', message: <random message>}`
   
 ### `POST /user/:username`
-Body: `empty`  
 REST call can be used to get full info about a user.  
-You must include Basic authentication in http header.
+
+__Headers:__ `Authorization: Basic `  
+__Body:__ `empty`  
   
 ### `POST /friend/:username`
-Body: `empty`  
 REST call can be used to add a friend to the one who is authenticated.  
-You must include Basic authentication in http header.
 
+__Headers:__ `Authorization: Basic `  
+__Body:__ `empty`  
   
 ### `POST /friends`
-Body: `empty`  
 REST call can be used to get all the friends of the one who is authenticated.  
-You must include Basic authentication in http header.
-  
+
+__Headers:__ `Authorization: Basic `  
+__Body:__ `empty`
+
 ### `POST /achievements/:username`
-Body: `empty`  
 REST call can be used to achievemenets of the user, specified in the uri.  
-You must include Basic authentication in http header.
-  
+
+__Headers:__ `Authorization: Basic `  
+__Body:__ `empty`  
+
 ## Important Notes
 
 * RECREATE database before launch this version, due to its not compatible with the old one, and you can get runtime error otherwise.
