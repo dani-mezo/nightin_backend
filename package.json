@@ -1,15 +1,18 @@
 {
-  "name": "Nightin Backend",
+  "name": "nightin-backend",
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "~4.13.1",
-    "password-hash": "~1.2.2",
     "body-parser": "~1.14.1",
+    "express": "~4.13.1",
     "mongodb": "~2.0.43",
+    "passport": "^0.3.0",
+    "passport-http": "^0.3.0",
+    "password-hash": "~1.2.2",
     "path": "~0.12.7",
+    "winston": "^2.0.0"
   }
 }

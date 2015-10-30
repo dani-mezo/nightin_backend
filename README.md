@@ -2,61 +2,92 @@
 
 ## Install
 
-* `npm install`
+`npm install`
 
 ## Start
 
-* `mongod.exe`
-* `node server.js`
+`mongod.exe`  
+`node server.js`
 
 ## Test
-
-* In browser type: localhost/test
+Open url: [`localhost:8080/test`](http://localhost:8080/test)
 
 ## MongoDB
+Install mongodb
+run `mongod.exe` BEFORE running `node server.js `
+(you might want to set up a default database on the same drive as mongodb is installed as e.g.: `e:/data/db/`, or either use the command line argument to set up yours, e.g: `mongod.exe -dbpath 'path/to/your/db'`)
+DO NOT restart mongodb during server.js is running, due to reconnection is not implemented yet
 
-* Install mongodb
-* run `mongod.exe` BEFORE running `node server.js `
-* (you might want to set up a default database on the same drive as mongodb is installed as e.g.: `e:/data/db/`, or either use the command line argument to set up yours, e.g: `mongod.exe -dbpath 'path/to/your/db'`)
-* DO NOT restart mongodb during server.js is running, due to reconnection is not implemented yet
 
 ## REST API
 
-### `/login/:user/:password`
-* `/login/:user/:password` GET REST call can be used to authenticate clients. Answers can be:
-  * `{status: "success", token: "recently_generated_token"}` OR
-  * `{status: "error", message: "random message"}`
+### `POST /login`
+REST call can be used to authenticate clients, and generate new token
 
-### `/auth/:user/:token`
-* `/auth/:user/:token` GET REST call can be used to authenticate clients. Answers can be:
-  * `{status: "success"}` OR
-  * `{status: "error", message: "random message"}`
+__Headers:__ No required header  
+__Body:__
+
+    {
+        username: <username>, 
+        password: <password>
+    }  
+
+
+__Answers:__  
+success: `{token: <valid_token>}`  
+error: `{status: 'error', message: <random message>}`
+
+### `POST /auth`
+REST call can be used to authenticate client's token.  
+
+__Headers:__ `Authorization: Basic `  
+__Body:__ `empty`  
+__Answers:__  
+success: `{token: <valid_token>}`  
+error: `{status: 'error', message: <random message>}`
   
-### `/signup`
-* `/signup` POST REST call can be used to sign up. Answers can be:
-  * `{status: "success"}` OR
-  * `{status: "error", message: "random message"}`
+### `POST /signup`
+REST call can be used to sign up. 
+
+__Headers:__ `Authorization: Basic `  
+__Body:__
+
+    {
+        username: <username>,
+        password: <password>,
+        first_name: <first_name>,
+        last_name: <last_name>,
+        email: <email>
+    }
+
+__Answers:__  
+success: `{<user object>}`  
+error: `{status: 'error', message: <random message>}`
   
-### `/user/:username`
-* `/user/:username` POST REST call can be used to get full info about a user.
-  * You must include as `data` the following object, to authenticate the call with:
-  * `{username: "...", token: "..."}`
+### `POST /user/:username`
+REST call can be used to get full info about a user.  
+
+__Headers:__ `Authorization: Basic `  
+__Body:__ `empty`  
   
-### `/friend/:username`
-* `/friend/:username` POST REST call can be used to add a friend to the one who is validated by `data`.
-  * You must include as `data` the following object, to authenticate the call with:
-  * `{username: "...", token: "..."}`
+### `POST /friend/:username`
+REST call can be used to add a friend to the one who is authenticated.  
+
+__Headers:__ `Authorization: Basic `  
+__Body:__ `empty`  
   
-### `/friends`
-* `/friends` POST REST call can be used to get all the friends of the one who is validated by `data`.
-  * You must include as `data` the following object, to authenticate the call with:
-  * `{username: "...", token: "..."}`
-  
-### `/achievements/:username`
-* `/achievements/:username` POST REST call can be used to achievemenets of the user, specified in the uri.
-  * You must include as `data` the following object, to authenticate the call with:
-  * `{username: "...", token: "..."}`
-  
+### `POST /friends`
+REST call can be used to get all the friends of the one who is authenticated.  
+
+__Headers:__ `Authorization: Basic `  
+__Body:__ `empty`
+
+### `POST /achievements/:username`
+REST call can be used to achievemenets of the user, specified in the uri.  
+
+__Headers:__ `Authorization: Basic `  
+__Body:__ `empty`  
+
 ## Important Notes
 
 * RECREATE database before launch this version, due to its not compatible with the old one, and you can get runtime error otherwise.
