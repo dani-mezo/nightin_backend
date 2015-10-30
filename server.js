@@ -128,7 +128,7 @@ router.post('/signup', function (req, res, next) {
         notFound: function () {
             database.addUser(newUser, {
                 success: function () {
-                    res.json(newUser);
+                    res.json({user: newUser});
                 },
                 error: function (error) {
                     res.status(500);
@@ -152,7 +152,7 @@ router.post('/user/:username', passport.authenticate('basic', {session: false}),
 
     database.getUser(usernameToGet, {
         success: function (user) {
-            res.json(user);
+            res.json({user: user});
         },
         notFound: function () {
             res.status(404);
@@ -173,7 +173,7 @@ router.post('/friend/:username', passport.authenticate('basic', {session: false}
 
     database.addFriendNameToUser(req.user, usernameToAdd, {
         success: function (user) {
-            res.json(user.friends);
+            res.json({friends: user.friends});
         },
         notFound: function () {
             res.status(404);
@@ -189,7 +189,7 @@ router.post('/friend/:username', passport.authenticate('basic', {session: false}
 /*************************************************************** GET FRIENDS ********************************************************************/
 
 router.post('/friends', passport.authenticate('basic', {session: false}), function (req, res, next) {
-    res.json(req.user.friends);
+    res.json({friends: req.user.friends});
 });
 
 
@@ -201,7 +201,7 @@ router.post('/achievements/:username', passport.authenticate('basic', {session: 
 
     database.getUser(usernameToGetAchievements, {
         success: function (user) {
-            res.json(user.achievements);
+            res.json({achievements: user.achievements});
         },
         notFound: function () {
             res.status(404);
