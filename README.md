@@ -2,60 +2,79 @@
 
 ## Install
 
-* `npm install`
+`npm install`
 
 ## Start
 
-* `mongod.exe`
-* `node server.js`
+`mongod.exe`  
+`node server.js`
 
 ## Test
-
-* In browser type: localhost/test
+Open url: [`localhost:8080/test`](http://localhost:8080/test)
 
 ## MongoDB
-
-* Install mongodb
-* run `mongod.exe` BEFORE running `node server.js `
-* (you might want to set up a default database on the same drive as mongodb is installed as e.g.: `e:/data/db/`, or either use the command line argument to set up yours, e.g: `mongod.exe -dbpath 'path/to/your/db'`)
-* DO NOT restart mongodb during server.js is running, due to reconnection is not implemented yet
+Install mongodb
+run `mongod.exe` BEFORE running `node server.js `
+(you might want to set up a default database on the same drive as mongodb is installed as e.g.: `e:/data/db/`, or either use the command line argument to set up yours, e.g: `mongod.exe -dbpath 'path/to/your/db'`)
+DO NOT restart mongodb during server.js is running, due to reconnection is not implemented yet
 
 ## REST API
 
-### `/login/:user/:password`
-* `/login/:user/:password` GET REST call can be used to authenticate clients. Answers can be:
-  * `{status: "success", token: "recently_generated_token"}` OR
-  * `{status: "error", message: "random message"}`
+### `POST /login`
+Body: `{username: <username>, password: <password>}`  
+REST call can be used to authenticate clients, and generate new token 
 
-### `/auth/:user/:token`
-* `/auth/:user/:token` GET REST call can be used to authenticate clients. Answers can be:
-  * `{status: "success"}` OR
-  * `{status: "error", message: "random message"}`
+Answers can be:  
+success: `{token: <valid_token>}`  
+error: `{status: 'error', message: <random message>}`
+
+### `POST /auth`
+Body: `empty`   
+REST call can be used to authenticate client's token.
+
+Answers can be:  
+success: `{token: <valid_token>}`  
+error: `{status: 'error', message: <random message>}`
   
-### `/signup`
-* `/signup` POST REST call can be used to sign up. Answers can be:
-  * `{status: "success"}` OR
-  * `{status: "error", message: "random message"}`
+### `POST /signup`
+Body:
+
+
+    {
+        username: <username>,
+        password: <password>,
+        first_name: <first_name>,
+        last_name: <last_name>,
+        email: <email>
+    }
+
+
+REST call can be used to sign up. 
+
+Answers can be:  
+success: `{<user object>}`  
+error: `{status: 'error', message: <random message>}`
   
-### `/user/:username`
-* `/user/:username` POST REST call can be used to get full info about a user.
-  * You must include as `data` the following object, to authenticate the call with:
-  * `{username: "...", token: "..."}`
+### `POST /user/:username`
+Body: `empty`  
+REST call can be used to get full info about a user.  
+You must include Basic authentication in http header.
   
-### `/friend/:username`
-* `/friend/:username` POST REST call can be used to add a friend to the one who is validated by `data`.
-  * You must include as `data` the following object, to authenticate the call with:
-  * `{username: "...", token: "..."}`
+### `POST /friend/:username`
+Body: `empty`  
+REST call can be used to add a friend to the one who is authenticated.  
+You must include Basic authentication in http header.
+
   
-### `/friends`
-* `/friends` POST REST call can be used to get all the friends of the one who is validated by `data`.
-  * You must include as `data` the following object, to authenticate the call with:
-  * `{username: "...", token: "..."}`
+### `POST /friends`
+Body: `empty`  
+REST call can be used to get all the friends of the one who is authenticated.  
+You must include Basic authentication in http header.
   
-### `/achievements/:username`
-* `/achievements/:username` POST REST call can be used to achievemenets of the user, specified in the uri.
-  * You must include as `data` the following object, to authenticate the call with:
-  * `{username: "...", token: "..."}`
+### `POST /achievements/:username`
+Body: `empty`  
+REST call can be used to achievemenets of the user, specified in the uri.  
+You must include Basic authentication in http header.
   
 ## Important Notes
 

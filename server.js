@@ -91,7 +91,6 @@ router.post('/auth', passport.authenticate('basic', {session: false}), function 
 });
 
 /*************************************************************** SIGN UP ********************************************************************/
-/*     DONE    */
 router.post('/signup', function (req, res, next) {
 
     var username = req.body.username;
@@ -147,7 +146,6 @@ router.post('/signup', function (req, res, next) {
 
 
 /*************************************************************** GET USER ********************************************************************/
-/*     DONE    */
 router.post('/user/:username', passport.authenticate('basic', {session: false}), function (req, res, next) {
 
     var usernameToGet = req.params.username;
