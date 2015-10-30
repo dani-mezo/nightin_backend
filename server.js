@@ -69,6 +69,7 @@ router.post('/login', function (req, res, next) {
                 })
             } else {
                 logger.debug('[Login] Wrong password for the user <%s>', username);
+                res.status(401);
                 res.json({status: 'error', message: 'Wrong username or password!'});
             }
 
