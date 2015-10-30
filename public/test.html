@@ -21,6 +21,26 @@
         <pre class="col-xs-6" id="answer" style="text-align:left;float:left;vertical-align: middle; margin-top: 20px">Hi fellow tester!</pre>
     </div>
 
+    <div class="col-xs-12 pleasedontfloat" style="margin-bottom: 20px; vertical-align: middle;">
+        <div class="col-xs-3">
+            <h1 style="text-align:left;float:left;">Authentication: </h1>
+        </div>
+
+        <div class="col-xs-6">
+            <form>
+                <div class="form-group">
+                    <label for="global_auth_username">Username:</label>
+                    <input type="text" name="username" class="form-control" id="global_auth_username">
+                </div>
+                <div class="form-group">
+                    <label for="global_auth_token">Token:</label>
+                    <input type="text" name="token" class="form-control" id="global_auth_token">
+                </div>
+            </form>
+        </div>
+
+    </div>
+
     <hr class="pleasedontfloat"/>
 
     <div class="col-xs-3 pleasedontfloat">
@@ -73,14 +93,7 @@
             <h2>Authenticate <br>
                 <small>(GET to '/auth/:user/:token')</small>
             </h2>
-            <div class="form-group">
-                <label for="auth_username">Username:</label>
-                <input type="text" name="username" class="form-control" id="auth_username">
-            </div>
-            <div class="form-group">
-                <label for="auth_token">Token:</label>
-                <input type="text" name="password" class="form-control" id="auth_token">
-            </div>
+
 
             <button type="submit" class="btn btn-default float">Authenticate</button>
         </form>
@@ -94,14 +107,7 @@
                 <label for="user_usernameToGet">User to get:</label>
                 <input type="text" name="username" class="form-control" id="user_usernameToGet">
             </div>
-            <div class="form-group">
-                <label for="user_username">Username:</label>
-                <input type="text" name="username" class="form-control" id="user_username">
-            </div>
-            <div class="form-group">
-                <label for="user_token">Token:</label>
-                <input type="text" name="token" class="form-control" id="user_token">
-            </div>
+
 
             <button type="submit" class="btn btn-default float">Get user</button>
         </form>
@@ -120,14 +126,7 @@
                 <label for="friend_usernameToAdd">User to add:</label>
                 <input type="text" name="username" class="form-control" id="friend_usernameToAdd">
             </div>
-            <div class="form-group">
-                <label for="friend_username">Username:</label>
-                <input type="text" name="username" class="form-control" id="friend_username">
-            </div>
-            <div class="form-group">
-                <label for="friend_token">Token:</label>
-                <input type="text" name="token" class="form-control" id="friend_token">
-            </div>
+
 
             <button type="submit" class="btn btn-default float">Friend user</button>
         </form>
@@ -138,14 +137,6 @@
                 <small>(POST to '/friends', in data: validation username+token )</small>
             </h2>
 
-            <div class="form-group">
-                <label for="auth_username">Username:</label>
-                <input type="text" name="username" class="form-control" id="friends_username">
-            </div>
-            <div class="form-group">
-                <label for="auth_token">Token:</label>
-                <input type="text" name="token" class="form-control" id="friends_token">
-            </div>
 
             <button type="submit" class="btn btn-default float">Get friends</button>
         </form>
@@ -157,17 +148,10 @@
                 <small>(POST to '/achievements/:username', in data: validation username+token )</small>
             </h2>
             <div class="form-group">
-                <label for="achi_username">User to get it's achievements:</label>
+                <label for="achi_usernameToGet">User to get it's achievements:</label>
                 <input type="text" name="username" class="form-control" id="achi_usernameToGet">
             </div>
-            <div class="form-group">
-                <label for="achi_username">Username:</label>
-                <input type="text" name="username" class="form-control" id="achi_username">
-            </div>
-            <div class="form-group">
-                <label for="achi_token">Token:</label>
-                <input type="text" name="token" class="form-control" id="achi_token">
-            </div>
+
 
             <button type="submit" class="btn btn-default float">Get Achievements</button>
         </form>
@@ -179,11 +163,10 @@
 
 <script>
 
-    $.fn.serializeObject = function()
-    {
+    $.fn.serializeObject = function () {
         var o = {};
         var a = this.serializeArray();
-        $.each(a, function() {
+        $.each(a, function () {
             if (o[this.name] !== undefined) {
                 if (!o[this.name].push) {
                     o[this.name] = [o[this.name]];
@@ -205,22 +188,29 @@
                 url: '/signup',
                 type: 'POST',
                 dataType: 'json',
-                data: {data: $('form#signup').serializeObject()},
+                data: $('form#signup').serialize(),
                 success: handleSuccess
             });
-            $("#signup")[0].reset();
+            //$("#signup")[0].reset();
 
             return false;
         });
 
         $("#login").submit(function (event) {
+            var username = $("#login_username").val();
+            var password = $("#login_password").val();
+
             event.preventDefault();
             $.ajax({
                 url: '/login',
                 type: 'POST',
                 dataType: 'json',
-                data: {data: {username: $("#login_username").val(), password: $("#login_password").val()}},
-                success: handleSuccess
+                data: {username: username, password: password},
+                success: function (data) {
+                    handleSuccess(data);
+                    $('#global_auth_username').val(username);
+                    $('#global_auth_token').val(data.token);
+                }
             });
             $("#login")[0].reset();
 
@@ -233,7 +223,8 @@
                 url: '/auth',
                 type: 'POST',
                 dataType: 'json',
-                data: {data: {username: $("#auth_username").val(), token: $("#auth_token").val()}},
+                data: {},
+                beforeSend: addBasicAuth,
                 success: handleSuccess
             });
             $("#auth")[0].reset();
@@ -244,10 +235,11 @@
         $("#user").submit(function (event) {
             event.preventDefault();
             $.ajax({
-                url: '/user',
+                url: '/user/' + $("#user_usernameToGet").val(),
                 type: 'POST',
                 dataType: 'json',
-                data: {username: $("#user_username").val(), token: $("#user_token").val(), data:{username:$("#user_usernameToGet").val()}},
+                data: {},
+                beforeSend: addBasicAuth,
                 success: handleSuccess
             });
             $("#user")[0].reset();
@@ -258,10 +250,11 @@
         $("#friend").submit(function (event) {
             event.preventDefault();
             $.ajax({
-                url: '/friend',
+                url: '/friend/' + $("#friend_usernameToAdd").val(),
                 type: 'POST',
                 dataType: 'json',
-                data: {username: $("#friend_username").val(), token: $("#friend_token").val(), data:{username:$("#friend_usernameToAdd").val()}},
+                data: {},
+                beforeSend: addBasicAuth,
                 success: handleSuccess
             });
             $("#friend")[0].reset();
@@ -275,7 +268,8 @@
                 url: '/friends',
                 type: 'POST',
                 dataType: 'json',
-                data: {username: $("#friends_username").val(), token: $("#friends_token").val()},
+                data: {},
+                beforeSend: addBasicAuth,
                 success: handleSuccess
             });
             $("#friend")[0].reset();
@@ -286,10 +280,11 @@
         $("#achi").submit(function (event) {
             event.preventDefault();
             $.ajax({
-                url: '/achievements',
+                url: '/achievements/' + $("#achi_usernameToGet").val(),
                 type: 'POST',
                 dataType: 'json',
-                data: {username: $("#achi_username").val(), token: $("#achi_token").val(), data:{username:$("#achi_usernameToGet").val()}},
+                data: {},
+                beforeSend: addBasicAuth,
                 success: handleSuccess
             });
             $("#achi")[0].reset();
@@ -299,6 +294,14 @@
 
         function handleSuccess(data) {
             $("#answer").html(JSON.stringify(data, undefined, 2));
+        }
+
+        function addBasicAuth(xhr) {
+
+            var username = $("#global_auth_username").val();
+            var token = $("#global_auth_token").val();
+
+            xhr.setRequestHeader("Authorization", "Basic " + window.btoa(username + ':' + token));
         }
 
     });
