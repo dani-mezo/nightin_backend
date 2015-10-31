@@ -464,7 +464,9 @@ function saveUser(User, res) {
         users.insert(User, function (err, records) {
             if (!err) {
                 console.log("[DATABASE][INFO] Successfully saved user: " + User.username);
-                res.json({});
+
+                delete User.password;
+                res.json(User);
                 console.log("[POST][SIGNUP][INFO] User signed up successfully: " + User.username);
             } else {
                 console.log("[DATABASE][ERROR] Failed to save user: " + User.username);
