@@ -12,7 +12,6 @@
     "passport": "^0.3.0",
     "passport-http": "^0.3.0",
     "password-hash": "~1.2.2",
-    "path": "~0.12.7",
-    "winston": "^2.0.0"
+    "path": "~0.12.7"
   }
 }
