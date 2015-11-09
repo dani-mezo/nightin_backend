@@ -166,6 +166,9 @@ router.post('/signup', function (req, res, next) {
     var email = req.body.email;
     var first_name = req.body.first_name;
     var last_name = req.body.last_name;
+	
+	var items = ['friend1.jpg','friend2.jpg','friend3.jpg','friend4.jpg','friend5.jpg','friend6.jpg','friend7.jpg','friend8.jpg','friend9.jpg','friend10.jpg'];
+	var item = items[Math.floor(Math.random()*items.length)];
 
 
     if (username === undefined || username === "" ||
@@ -199,6 +202,7 @@ router.post('/signup', function (req, res, next) {
             }
             else {
                 var user = new User(username, password, first_name, last_name, email, "");
+				user.picture = item;
 
                 saveUser(user, res);
             }
@@ -264,6 +268,56 @@ router.post('/user/:username', passport.authenticate('basic', {session: false}),
         return;
     }
 
+});
+
+router.get('/userimage/:username', function (req, res, next) {
+
+    var usernameToGet = req.params.username;
+
+
+    console.log('[GET][USERIMAGE][INFO] Valid image request: ' + usernameToGet);
+
+    if (users != undefined) {
+
+        var criteria = {};
+        criteria.username = usernameToGet;
+
+        // findOne method is deprecated at the moment
+        users.find(criteria, {
+            username: 1,
+            first_name: 1,
+            last_name: 1,
+            friends: 1,
+            achievements: 1,
+            picture: 1
+        }).toArray(function (err, docs) {
+            if (err) {
+                res.status(500);
+                res.json({status: "error", message: "internal"});
+                console.log("[DATABASE][ERROR]");
+                console.log(err);
+                return;
+            }
+            if (docs === undefined || docs.length === 0) {
+                res.status(404);
+                res.json({status: "error", message: "User not found!"});
+                console.log("[GET][USERIMAGE][WARNING] Requested user not found in the database");
+                return;
+            }
+            var user = docs[0];
+			console.log('[GET][USERIMAGE] Requested image for user ' + user.username + ' image: ' + user.picture);
+			res.sendFile(path.join(__dirname, 'private','user', user.picture));
+			
+            //res.json({user: user});
+            console.log("[GET][USERIMAGE][INFO] Requested user found: " + usernameToGet);
+            return;
+        });
+    } else {
+        res.status(500);
+        res.json({status: "error", message: "internal"});
+        console.log("[DATABASE][ERROR] Collection 'users' is undefined!");
+        return;
+    }
 });
 
 /*************************************************************** ADD FRIEND ********************************************************************/
