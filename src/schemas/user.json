@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "An user object",
+  "type": "object",
+  "properties": {
+    "username": {
+      "type": "string"
+    },
+    "first_name": {
+      "type": "string"
+    },
+    "last_name": {
+      "type": "string"
+    },
+    "full_name": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "picture": {
+      "type": "string"
+    },
+    "location": {
+      "$ref": "#geo.json"
+    },
+    "achievements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "friends": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "_id": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}
